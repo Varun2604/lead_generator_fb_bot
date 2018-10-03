@@ -1,0 +1,182 @@
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css">
+
+<div style="display: flex ; align-items: center; justify-content: center;height:100%;width:auto;">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="leads-table-row"></div>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-md-2">
+                Push :
+            </div>
+            <div class="col-md-8">
+                <textarea class="push" rows="4" placeholder="Please type the content to be push notified." style="width:100%;"></textarea>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-success push">Push Notify.</button>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-md-2">
+                Add notification task :
+            </div>
+            <div class="col-md-6">
+                <textarea class="schedule" rows="4" placeholder="Please type the content to be push notified, as per schedule." style="width:100%;"></textarea>
+            </div>
+            <div class="col-md-2">
+                <select id="schedule_selector" class="form-control">
+                    <option value="0">Select schedule.</option>
+                    <option value="daily">Daily</option>
+                    <option value="Sunday">Sunday</option>
+                    <option value="Monday">Monday</option>
+                    <option value="Tuesday">Tuesday</option>
+                    <option value="Wednesday">Wednesday</option>
+                    <option value="Thursday">Thursday</option>
+                    <option value="Friday">Friday</option>
+                    <option value="Saturday">Saturday</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-success schedule">Add Task.</button>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="schedules-table-row"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+jQuery(function(){
+   jQuery('button.push').on('click', function(){
+       var val = jQuery('textarea.push').val();
+       if(val && val != ''){
+           var d = {'data' : val};
+           jQuery.ajax({
+               url : '/push',
+               headers : {'Content-Type' : 'application/json'},
+               method : 'POST',
+               data : JSON.stringify(d),
+               success : function(ok, success){
+                   if(ok === "ok" && success === "success" ){
+                       alert("Push notification sent successfully to all subscribers.")
+                   }
+               },
+               error : function(){
+                   alert('We met with some error, please try again later!');
+                   console.log(arguments);
+               }
+           });
+       }
+   });
+      jQuery('button.schedule').on('click', function(){
+       var val = jQuery('textarea.schedule').val();
+       var schedule = jQuery('select#schedule_selector').val();
+       if(val && val != '' && schedule != 0){
+           var d = {'message' : val, 'schedule':schedule};
+           jQuery.ajax({
+               url : '/schedules',
+               headers : {'Content-Type' : 'application/json'},
+               method : 'POST',
+               data : JSON.stringify(d),
+               success : function(ok, success){
+                   if(ok === "ok" && success === "success" ){
+                       alert("Task successfully added! Notifications will be sent to subscribers as per schedule.");
+                       document.location.reload();
+                   }
+               },
+               error : function(){
+                   alert('We met with some error, please try again later!');
+                   console.log(arguments);
+               }
+           });
+       }
+   });
+   jQuery.ajax({
+    	url : '/leads',
+    	success : function(data, success){
+    	    data = JSON.parse(data)
+    		var $html = jQuery("<table class='table table-striped table-bodered'><thead><th>Query for</th><th>Email</th></thead><tbody></tbody></table>");
+    		for(var i = 0; i < data.length; i++){
+    			var d = data[i];
+    			if(d[0] != null && d[1] != null){
+    				$html.find('tbody').append("<tr><td>"+d[0]+"</td><td>"+d[1]+"</td></tr>");
+    			}
+    		}
+    		jQuery('.leads-table-row').append("<span>Leads to be Acknowledged:</span>")
+    		jQuery('.leads-table-row').append($html)
+    	}
+    });
+    jQuery.ajax({
+    	url : '/schedules',
+    	success : function(data, success){
+	        data = JSON.parse(data)
+		    var $html = jQuery("<table class='table table-striped table-bodered'><thead><th>Message</th><th>Notification Time</th><th></th><th></th></thead><tbody></tbody></table>");
+		    for(var i = 0; i < data.length; i++){
+			    var d = data[i];
+			    if(d[0] != null && d[1] != null && d[1] != null){
+			        var s = '<select class="schedule-selector form-control"> <option value="0">Select schedule.</option> <option value="daily">Daily</option> <option value="Sunday">Sunday</option> <option value="Monday">Monday</option> <option value="Tuesday">Tuesday</option> <option value="Wednesday">Wednesday</option> <option value="Thursday">Thursday</option> <option value="Friday">Friday</option> <option value="Saturday">Saturday</option> </select>';
+			    	var row = "<tr id='"+d[0]+"'><td><textarea type='text' class='message-input'></textarea></td><td>"+s+"</td><td><button class='btn btn-success update-schedule'>Update</button></td><td><button class='btn btn-danger delete-schedule'>Delete</button></td></tr>";
+			    	var $row = jQuery(row);
+			    	$row.find('.schedule-selector').val(d[1]);
+			    	$row.find('.message-input').val(d[2]);
+			    	$row.find('.update-schedule').on('click', function(e){
+			    	   var row = e.target.parentElement.parentElement;
+			    	   var $row = jQuery(row);
+			    	   var d = {id : row.id, message : $row.find('.message-input').val(), day :  $row.find('.schedule-selector').val()};
+                       jQuery.ajax({
+                           url : '/schedules',
+                           headers : {'Content-Type' : 'application/json'},
+                           method : 'PUT',
+                           data : JSON.stringify(d),
+                           success : function(ok, success){
+                               if(ok === "ok" && success === "success" ){
+                                   alert("Schedule successfully updated.");
+                                   document.location.reload();
+                               }
+                           },
+                           error : function(){
+                               alert('We met with some error, please try again later!');
+                               console.log(arguments);
+                           }
+                       });
+			    	});
+			    	$row.find('.delete-schedule').on('click', function(e){
+			    	   var row = e.target.parentElement.parentElement;
+			    	   var $row = jQuery(row);
+			    	   var d = {id : row.id};
+                       jQuery.ajax({
+                           url : '/schedules',
+                           headers : {'Content-Type' : 'application/json'},
+                           method : 'DELETE',
+                           data : JSON.stringify(d),
+                           success : function(ok, success){
+                               if(ok === "ok" && success === "success" ){
+                                   alert("Schedule successfully deleted.");
+                                   document.location.reload();
+                               }
+                           },
+                           error : function(){
+                               alert('We met with some error, please try again later!');
+                               console.log(arguments);
+                           }
+                       });
+			    	});
+			    	$html.find('tbody').append($row);
+			    }
+		    }
+		    jQuery('.schedules-table-row').append("<span>Scheduled Notifications:</span>")
+		    jQuery('.schedules-table-row').append($html)
+	    }
+    });
+});
+</script>

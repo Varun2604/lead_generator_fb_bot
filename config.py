@@ -6,3 +6,4 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SUBSCRIPTION_VERIFICATION_TOKEN = 'verification_token'
     FACEBOOK_ACCESS_TOKEN = os.environ.get('FACEBOOK_ACCESS_TOKEN') or 'your_fb_access_token'
+    FACEBOOK_MESSAGE_API='https://graph.facebook.com/v2.6/me/messages'

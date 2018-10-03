@@ -8,3 +8,7 @@ Steps for Database migrations: (all commands to be executed from the root)
 - flask db init (will create a migrations directory)
 - flask db migrate (will create the necessary migrations)
 - flask db upgrade (will conduct the necessary migrations)
+
+Starting the flask server (run the below commands from the root)
+- export FLASK_APP=index.py     (export app root)
+- flask run

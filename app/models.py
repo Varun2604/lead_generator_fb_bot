@@ -1,8 +1,8 @@
 from app import db
 
 class Lead(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    sender = db.Column(db.Integer, index=True, primary_key=True)
+    id = db.Column(db.BigInteger, primary_key=True)
+    sender = db.Column(db.BigInteger, index=True, primary_key=True)
     email = db.Column(db.String(120), index=True)
     phone = db.Column(db.String(120), index=True)
     entity = db.Column(db.String(120))
@@ -12,7 +12,7 @@ class Lead(db.Model):
 
 
 class Scheduled_Push_Message(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.BigInteger, primary_key=True)
     day = db.Column(db.String(10))
     message = db.Column(db.String(255))
 
@@ -20,4 +20,5 @@ class Scheduled_Push_Message(db.Model):
         return '<Scheduled_Push_Message {}>'.format(self.id)
 
 class Subscribed_Users(db.Model):
-    user_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.BigInteger, primary_key=True)
+    user_id = db.Column(db.BigInteger, index=True, unique=True)
