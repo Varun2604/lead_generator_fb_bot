@@ -18,3 +18,6 @@ class Scheduled_Push_Message(db.Model):
 
     def __repr__(self):
         return '<Scheduled_Push_Message {}>'.format(self.id)
+
+class Subscribed_Users(db.Model):
+    user_id = db.Column(db.Integer, primary_key=True)
