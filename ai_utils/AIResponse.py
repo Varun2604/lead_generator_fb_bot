@@ -1,12 +1,12 @@
 
 class AIResponse(object):
 
-    def __init__(self, message, entity):
+    def __init__(self, message, intend):
         self.message = message
-        self.entity = entity
+        self.intend = intend
 
     def get_message(self):
         return self.message
 
-    def get_entity(self):
-        return self.entity
+    def get_intend(self):
+        return self.intend
