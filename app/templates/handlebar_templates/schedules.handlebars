@@ -1,0 +1,74 @@
+<div class="row add-schedule">
+    <div class="col-md-2">
+        Add a schedule :
+    </div>
+    <div class="col-md-6">
+        <textarea class="schedule message-input" rows="4" placeholder="Please type the content to be push notified, as per schedule." style="width:100%;"></textarea>
+    </div>
+    <div class="col-md-2">
+        <select id="schedule_selector" class="form-control schedule-selector">
+            <option value="0">Select schedule.</option>
+            <option value="daily">Daily</option>
+            <option value="Sunday">Sunday</option>
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-success schedule" onclick="addSchedule()">Add Task.</button>
+    </div>
+</div>
+<hr>
+<div class="row">
+    <div class="col-md-12">
+        Configured push notifications
+    <div>
+    <div class="col-md-12">
+        <div class="schedules-table-row">
+            <table class="table table-striped table-bodered">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th>Message</th>
+                        <th>Notification Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {{#each schedules as |schedule key|}}
+                    <tr id="schedule_{{schedule.id}}">
+                        <td>
+                            <button class="btn btn-success update-schedule" onclick="updateSchedule({{schedule.id}})">Update</button>
+                        </td>
+                        <td>
+                            <button class="btn btn-danger delete-schedule" onclick="deleteSchedule({{schedule.id}})">Delete</button>
+                        </td>
+                        <td>
+                            <textarea type="text" class="message-input form-control">{{schedule.message}}</textarea>
+                        </td>
+                        <td>
+                            <select class="schedule-selector form-control">
+                            {{#select schedule.day}}
+                                <option value="0">Select schedule.</option>
+                                <option value="daily">Daily</option>
+                                <option value="Sunday">Sunday</option>
+                                <option value="Monday">Monday</option>
+                                <option value="Tuesday">Tuesday</option>
+                                <option value="Wednesday">Wednesday</option>
+                                <option value="Thursday">Thursday</option>
+                                <option value="Friday">Friday</option>
+                                <option value="Saturday">Saturday</option>
+                            {{/select}}
+                            </select>
+                        </td>
+                    </tr>
+                {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -9,7 +9,7 @@ def register_sender(sender_id):
         db.session.commit()
 
 def register_lead_query(ai_response, event_response):
-    if ai_response.get_entity() is not None:
+    if ai_response.get_intend() is not None:
         lead_query = Lead.query.filter_by(sender=event_response.get_sender_id(), entity=ai_response.get_intend()).first()
         if lead_query is None:
             lead = Lead(sender=event_response.get_sender_id(), entity=ai_response.get_intend())
